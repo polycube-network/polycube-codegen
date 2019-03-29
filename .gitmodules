@@ -1,0 +1,8 @@
+[submodule "swagger-codegen"]
+	path = swagger-codegen
+	url = https://github.com/polycube-network/swagger-codegen
+	branch = master
+[submodule "pyang-swagger"]
+	path = pyang-swagger
+	url = https://github.com/polycube-network/pyang-swagger
+	branch = master
