@@ -61,6 +61,11 @@ if [ -z ${YANG_PATH+x} ]; then
 	exit 0
 fi
 
+if [ ! -f "$YANG_PATH" ]; then
+	echo "$YANG_PATH does not exist" >&2;
+	exit 0
+fi
+
 if [ -z ${OUT_FOLDER+x} ] && [ -z ${OUT_SWAGGER_PATH+x} ]; then
 	echo "You should specify the output folder file with the -o option" >&2;
 	show_help
@@ -71,7 +76,9 @@ if [[ "$POLYCUBE_IN_DOCKER" = "true" ]]; then
 	POLYCUBE_BASE_DATAMODELS_FOLDER="/polycube-base-datamodels"
 fi
 
-[ -z ${POLYCUBE_BASE_DATAMODELS_FOLDER+x} ] && SUDO='/usr/local/include/polycube/datamodel-common/'
+if [ -z ${POLYCUBE_BASE_DATAMODELS_FOLDER+x} ]; then
+	POLYCUBE_BASE_DATAMODELS_FOLDER='/usr/local/include/polycube/datamodel-common/'
+fi
 
 now="$(date '+%Y_%m_%d_%H_%M_%S')"
 json_filename="$now"_api.json
