@@ -7,6 +7,7 @@ set -e
 SWAGGER_CONFIG_FILE=$HOME/.config/polycube/swagger_codegen_config.json
 POLYCUBE_CODEGEN_LOG=/dev/null
 SWAGGER_CODEGEN_CLI=/usr/local/bin/swagger-codegen-cli.jar
+CLIENT_LANG=polycube
 
 function exit_error() {
 	if [ "$?" -ne "0" ]; then
@@ -17,21 +18,23 @@ function exit_error() {
 }
 
 function show_help() {
-usage="$(basename "$0") [-h] [-i input_yang] [-o output_folder] [-s output_swagger_file]
+usage="$(basename "$0") [-h] [-i input_yang] [-o output_folder] [-s output_swagger_file] [-l client_language]
 Polycube code generator that translates a YANG file into an polycube C++ service stub
 
 where:
     -h  show this help text
     -i  path to the input YANG file
     -o  path to the destination folder where the service stub will be placed
-    -s  path to the destination swagger file (optional)"
+    -s  path to the destination swagger file (optional)
+    -l  language used to generate service's client library (optional)"
 
 echo "$usage"
 }
 
+
 trap exit_error EXIT
 
-while getopts :i:o:s:h option; do
+while getopts :i:o:s:l:h option; do
  case "${option}" in
  h|\?)
 	show_help
@@ -43,6 +46,8 @@ while getopts :i:o:s:h option; do
 	;;
  s) OUT_SWAGGER_PATH=${OPTARG}
  	;;
+ l) CLIENT_LANG=${OPTARG}
+ 	;;	
  :)
     echo "Option -$OPTARG requires an argument." >&2
     show_help
@@ -93,10 +98,10 @@ if [ -n "${OUT_SWAGGER_PATH+set}" ]; then
 fi
 
 if [ -f $SWAGGER_CONFIG_FILE ]; then
-	java -jar $SWAGGER_CODEGEN_CLI generate -l polycube -i /tmp/"$json_filename" \
+	java -jar $SWAGGER_CODEGEN_CLI generate -l ${CLIENT_LANG} -i /tmp/"$json_filename" \
 		-o $OUT_FOLDER --config $SWAGGER_CONFIG_FILE > $POLYCUBE_CODEGEN_LOG 2>&1
 else
-	java -jar $SWAGGER_CODEGEN_CLI generate -l polycube -i /tmp/"$json_filename" \
+	java -jar $SWAGGER_CODEGEN_CLI generate -l ${CLIENT_LANG} -i /tmp/"$json_filename" \
 		-o $OUT_FOLDER > $POLYCUBE_CODEGEN_LOG 2>&1
 fi
 
@@ -104,7 +109,7 @@ rm /tmp/"$json_filename"
 
 cd $_pwd
 
-echo "C++ service stub generated under $OUT_FOLDER"
+echo "$CLIENT_LANG output generated under $OUT_FOLDER"
 exit 0
 
 
