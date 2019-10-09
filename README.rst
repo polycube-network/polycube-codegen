@@ -25,14 +25,32 @@ If you have installed polycube in the standard location and everything is ok you
 
 ::
 
-    $ polycube-codegen [-h] [-i input_yang] [-o output_folder] [-s output_swagger_file]
+    $ polycube-codegen [-h] [-i input_yang] [-o output_folder] [-s output_swagger_file] [-l client_language]
     Polycube code generator that translates a YANG file into an polycube C++ service stub
 
     where:
         -h  show this help text
         -i  path to the input YANG file
         -o  path to the destination folder where the service stub will be placed
-        -s  path to the destination swagger file (optional)"
+        -s  path to the destination swagger file (optional)
+        -l  language used to generate service's client library (optional)"
+
+Client stub for Polycube services
+^^^^^^
+
+Each Polycube service uses a specific convention for generate the REST APIs that are used by external players to interact with the service itself. 
+In order to interact with those service, users can use the ``polycubectl`` CLI tool or creates their own client programs that communicates with a given service.
+To simplify the creation of those programs, ``polycube-codegen`` supports the generation of client stubs in different programming languages such as ``golang``, ``java``, ``python`` (full list available `here <https://github.com/swagger-api/swagger-codegen#overview>`_ under the ``swagger-codegen`` project).
+
+To do this, we can directly use the provided ``polycube-codegen`` script adding the ``-l`` option with the name of the language you want to use.
+For instance, in order to generate the client stub for the ``pcn-simplebridge`` service, the command that you can use is the following:
+
+::
+
+    polycube-codegen -i pcn-simplebridge.yang -o output_dir -l go
+
+Alternatively, if you do not want to install the ``polycube-codegen`` tool, you can use the same syntax in the provided Docker image.
+
 
 Docker
 ^^^^^^

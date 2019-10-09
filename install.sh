@@ -45,6 +45,7 @@ PACKAGES=""
 PACKAGES+=" sudo git wget"
 PACKAGES+=" python-minimal python-pip python-setuptools" # dependencies for pyang swagger
 PACKAGES+=" default-jre default-jdk maven" # dependencies for swaggercodegen
+PACKAGES+=" jq" # dependencies for json parsing on bash scripts
 
 $SUDO $APT_CMD install -y $PACKAGES
 

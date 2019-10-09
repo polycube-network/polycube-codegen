@@ -8,6 +8,7 @@ SWAGGER_CONFIG_FILE=$HOME/.config/polycube/swagger_codegen_config.json
 POLYCUBE_CODEGEN_LOG=/dev/null
 SWAGGER_CODEGEN_CLI=/usr/local/bin/swagger-codegen-cli.jar
 CLIENT_LANG=polycube
+ONLINE_GENERATOR_URL=https://generator.swagger.io/api/gen/clients
 
 function exit_error() {
 	if [ "$?" -ne "0" ]; then
@@ -97,12 +98,26 @@ if [ -n "${OUT_SWAGGER_PATH+set}" ]; then
 	exit 0
 fi
 
-if [ -f $SWAGGER_CONFIG_FILE ]; then
-	java -jar $SWAGGER_CODEGEN_CLI generate -l ${CLIENT_LANG} -i /tmp/"$json_filename" \
-		-o $OUT_FOLDER --config $SWAGGER_CONFIG_FILE > $POLYCUBE_CODEGEN_LOG 2>&1
+if [ "$CLIENT_LANG" == "polycube" ]; then
+	if [ -f $SWAGGER_CONFIG_FILE ]; then
+		java -jar $SWAGGER_CODEGEN_CLI generate -l polycube -i /tmp/"$json_filename" \
+			-o $OUT_FOLDER --config $SWAGGER_CONFIG_FILE > $POLYCUBE_CODEGEN_LOG 2>&1
+	else
+		java -jar $SWAGGER_CODEGEN_CLI generate -l polycube -i /tmp/"$json_filename" \
+			-o $OUT_FOLDER > $POLYCUBE_CODEGEN_LOG 2>&1
+	fi
 else
-	java -jar $SWAGGER_CODEGEN_CLI generate -l ${CLIENT_LANG} -i /tmp/"$json_filename" \
-		-o $OUT_FOLDER > $POLYCUBE_CODEGEN_LOG 2>&1
+	# Let's use the online generator to generate the service clients
+	swagger_file=$(</tmp/"$json_filename")
+	json_body=' { "spec": '${swagger_file}' }'
+	res=$(curl -H "Content-type: application/json" -X POST -d "$json_body" ${ONLINE_GENERATOR_URL}/${CLIENT_LANG})
+	download_url=$(jq -r '.link' <<< "$res")
+	if [ $? -ne 0 ] || [ -z "$download_url" ] || [ "$download_url" == "null" ]; then
+		echo "Unable to generate the clients stub for ${CLIENT_LANG}"
+		exit 1
+	fi
+
+	wget -O "$OUT_FOLDER/${CLIENT_LANG}_client_api.zip" $download_url
 fi
 
 rm /tmp/"$json_filename"
