@@ -49,8 +49,9 @@ For instance, in order to generate the client stub for the ``pcn-simplebridge`` 
 
     polycube-codegen -i pcn-simplebridge.yang -o output_dir -l go
 
-Alternatively, if you do not want to install the ``polycube-codegen`` tool, you can use the same syntax in the provided Docker image.
+In its final processing step, polycube-codegen relies on the online service https://generator.swagger.io/api/gen/clients generator to create the code stub; hence this requires Internet connectivity.
 
+Alternatively, if you do not want to install the ``polycube-codegen`` tool, you can use the same syntax in the provided Docker image.
 
 Docker
 ^^^^^^
