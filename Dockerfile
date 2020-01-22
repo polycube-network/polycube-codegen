@@ -3,8 +3,9 @@
 #FROM localstack/java-maven-node-python
 FROM ubuntu:18.04
 
-RUN --mount=target=/polycube-codegen cp -r /polycube-codegen /tmp/polycube-codegen && \
-cd /tmp/polycube-codegen && SUDO="" ./install.sh && apt-get clean && \
+COPY . /tmp/polycube-codegen
+
+RUN cd /tmp/polycube-codegen && SUDO="" ./install.sh && apt-get clean && \
 rm -fr /root /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ENV POLYCUBE_IN_DOCKER="true"
