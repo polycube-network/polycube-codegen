@@ -13,7 +13,7 @@ If you want to install those by hands please refer to each repository to get fur
 
 ::
 
-    cd polycube-tools
+    cd polycube-codegen
     git submodule update --init
     ./install.sh
 
