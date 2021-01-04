@@ -42,7 +42,7 @@ $SUDO $APT_CMD update -y
 
 # Install python dependencies
 PACKAGES=""
-PACKAGES+=" sudo git wget"
+PACKAGES+=" sudo git wget curl"
 PACKAGES+=" python-minimal python-pip python-setuptools" # dependencies for pyang swagger
 PACKAGES+=" default-jre default-jdk maven" # dependencies for swaggercodegen
 PACKAGES+=" jq" # dependencies for json parsing on bash scripts

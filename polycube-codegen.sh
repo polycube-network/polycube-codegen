@@ -57,6 +57,8 @@ while getopts :i:o:s:l:h option; do
  esac
 done
 
+json_body=$OUT_FOLDER/jsonbodytmp
+
 if [ -f $POLYCUBE_CODEGEN_LOG ]; then
 	rm $POLYCUBE_CODEGEN_LOG
 fi
@@ -108,9 +110,10 @@ if [ "$CLIENT_LANG" == "polycube" ]; then
 	fi
 else
 	# Let's use the online generator to generate the service clients
+	if [ ! -d "$OUT_FOLDER" ]; then mkdir $OUT_FOLDER; fi
 	swagger_file=$(</tmp/"$json_filename")
-	json_body=' { "spec": '${swagger_file}' }'
-	res=$(curl -H "Content-type: application/json" -X POST -d "$json_body" ${ONLINE_GENERATOR_URL}/${CLIENT_LANG})
+	echo ' { "spec": '${swagger_file}' }' >> $json_body
+	res=$(curl -H "Content-type: application/json" -X POST -d @"$json_body" ${ONLINE_GENERATOR_URL}/${CLIENT_LANG})
 	download_url=$(jq -r '.link' <<< "$res")
 	if [ $? -ne 0 ] || [ -z "$download_url" ] || [ "$download_url" == "null" ]; then
 		echo "Unable to generate the clients stub for ${CLIENT_LANG}"
@@ -121,7 +124,7 @@ else
 fi
 
 rm /tmp/"$json_filename"
-
+rm $json_body
 cd $_pwd
 
 echo "$CLIENT_LANG output generated under $OUT_FOLDER"
