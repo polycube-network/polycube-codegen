@@ -124,7 +124,7 @@ else
 fi
 
 rm /tmp/"$json_filename"
-rm $json_body
+rm $json_body > /dev/null 2>&1 || true
 cd $_pwd
 
 echo "$CLIENT_LANG output generated under $OUT_FOLDER"
