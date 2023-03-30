@@ -13,7 +13,7 @@ jobs:
           docker build --file Dockerfile .
         if: github.ref != 'refs/heads/master'
       - name: Push image on repo
-        uses: elgohr/Publish-Docker-Github-Action@master
+        uses: elgohr/Publish-Docker-Github-Action@v5
         with:
           name: polycubenets/polycube-codegen
           username: ${{ secrets.DOCKER_USERNAME }}
